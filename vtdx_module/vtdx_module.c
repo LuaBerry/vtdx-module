@@ -4,7 +4,8 @@
 #include <linux/fs.h>
 #include <linux/uaccess.h>
 #include <linux/miscdevice.h>
-#include <linux/ioctl.h>
+
+#include <linux/kvm_host.h>
 
 #include "vtdx.h"
 
@@ -12,7 +13,7 @@ static long vtd_ioctl(struct file *flip,
         unsigned int ioctl, unsigned long arg) {
     switch (ioctl) {
         case VTDX_CREATE_TD: // Example command
-            create_vm();
+            create_vTD();
             printk(KERN_INFO "Create TD.\n");
             return 0;
         case VTDX_DESTROY_TD:
@@ -50,22 +51,30 @@ static void __exit vtdx_exit(void) {
     misc_deregister(&vtdx_dev);
 }
 
-static long create_vm(void) {
-    // Arbitrary logic to create a VM
-    /*
-    long kvm_fd = open("/dev/kvm", O_RDWR);
-    if (kvm_fd < 0) {
-        printk(KERN_ERR "Failed to open /dev/kvm\n");
-        return -1;
+static struct vTD* create_vTD(void) {
+    struct vTD *vtd;
+    int ret;
+
+    vtd = kmalloc(sizeof(struct vTD), GFP_KERNEL);
+    if (!vtd) {
+        printk(KERN_ERR "Failed to allocate memory for vTD\n");
+        return -ENOMEM;
     }
-    long vm_fd = ioctl(kvm_fd, KVM_CREATE_VM, 0);
-    if (vm_fd < 0) {
+    kvm_get_kvm(vtd->vm);
+    if (IS_ERR(vtd->vm)) {
         printk(KERN_ERR "Failed to create VM\n");
-        return -1;
+        kfree(vtd);
+        return PTR_ERR(vtd->vm);
     }
-    return vm_fd;
-    */
-    return 0; // Placeholder
+    kvm_get_vcpu(vtd->vm, 0);
+    if (IS_ERR(vtd->vcpu)) {
+        printk(KERN_ERR "Failed to create VCPU\n");
+        kvm_put_kvm(vtd->vm);
+        kfree(vtd);
+        return PTR_ERR(vtd->vcpu);
+    }
+    printk(KERN_INFO "Virtual TD created successfully.\n");
+    return vtd;
 }
 
 static void run_vm(void) {
