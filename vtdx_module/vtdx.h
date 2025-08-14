@@ -1,17 +1,80 @@
 #ifndef __VTDX_H__
 #define __VTDX_H__
 
-#define VTDX_CREATE_TD _IO ('v', 0)
-#define VTDX_DESTROY_TD _IO ('v', 1)
-#define VTDX_RUN_TD _IO ('v', 2)
+typedef enum seamcall_leaf_opcode_e
+{
+    TDH_VP_ENTER_LEAF                = 0,
+    TDH_MNG_ADDCX_LEAF               = 1,
+    TDH_MEM_PAGE_ADD_LEAF            = 2,
+    TDH_MEM_SEPT_ADD_LEAF            = 3,
+    TDH_VP_ADDCX_LEAF                = 4,
+    TDH_MEM_PAGE_RELOCATE            = 5,
+    TDH_MEM_PAGE_AUG_LEAF            = 6,
+    TDH_MEM_RANGE_BLOCK_LEAF         = 7,
+    TDH_MNG_KEY_CONFIG_LEAF          = 8,
+    TDH_MNG_CREATE_LEAF              = 9,
+    TDH_VP_CREATE_LEAF               = 10,
+    TDH_MNG_RD_LEAF                  = 11,
+    TDH_MEM_RD_LEAF                  = 12,
+    TDH_MNG_WR_LEAF                  = 13,
+    TDH_MEM_WR_LEAF                  = 14,
+    TDH_MEM_PAGE_DEMOTE_LEAF         = 15,
+    TDH_MR_EXTEND_LEAF               = 16,
+    TDH_MR_FINALIZE_LEAF             = 17,
+    TDH_VP_FLUSH_LEAF                = 18,
+    TDH_MNG_VPFLUSHDONE_LEAF         = 19,
+    TDH_MNG_KEY_FREEID_LEAF          = 20,
+    TDH_MNG_INIT_LEAF                = 21,
+    TDH_VP_INIT_LEAF                 = 22,
+    TDH_MEM_PAGE_PROMOTE_LEAF        = 23,
+    TDH_PHYMEM_PAGE_RDMD_LEAF        = 24,
+    TDH_MEM_SEPT_RD_LEAF             = 25,
+    TDH_VP_RD_LEAF                   = 26,
+    TDH_MNG_KEY_RECLAIMID_LEAF       = 27,
+    TDH_PHYMEM_PAGE_RECLAIM_LEAF     = 28,
+    TDH_MEM_PAGE_REMOVE_LEAF         = 29,
+    TDH_MEM_SEPT_REMOVE_LEAF         = 30,
+    TDH_SYS_KEY_CONFIG_LEAF          = 31,
+    TDH_SYS_INFO_LEAF                = 32,
+    TDH_SYS_INIT_LEAF                = 33,
+    TDH_SYS_RD_LEAF                  = 34,
+    TDH_SYS_LP_INIT_LEAF             = 35,
+    TDH_SYS_TDMR_INIT_LEAF           = 36,
+    TDH_SYS_RDALL_LEAF               = 37,
+    TDH_MEM_TRACK_LEAF               = 38,
+    TDH_MEM_RANGE_UNBLOCK_LEAF       = 39,
+    TDH_PHYMEM_CACHE_WB_LEAF         = 40,
+    TDH_PHYMEM_PAGE_WBINVD_LEAF      = 41,
+    TDH_MEM_SEPT_WR_LEAF             = 42,
+    TDH_VP_WR_LEAF                   = 43,
+    TDH_SYS_LP_SHUTDOWN_LEAF         = 44,
+    TDH_SYS_CONFIG_LEAF              = 45,
+    TDH_SERVTD_BIND_LEAF             = 48,
+    TDH_SERVTD_PREBIND_LEAF          = 49,
+    TDH_SYS_SHUTDOWN_LEAF            = 52,
+    TDH_SYS_UPDATE_LEAF              = 53,
+    TDH_EXPORT_ABORT_LEAF            = 64,
+    TDH_EXPORT_BLOCKW_LEAF           = 65,
+    TDH_EXPORT_RESTORE_LEAF          = 66,
+    TDH_EXPORT_MEM_LEAF              = 68,
+    TDH_EXPORT_PAUSE_LEAF            = 70,
+    TDH_EXPORT_TRACK_LEAF            = 71,
+    TDH_EXPORT_STATE_IMMUTABLE_LEAF  = 72,
+    TDH_EXPORT_STATE_TD_LEAF         = 73,
+    TDH_EXPORT_STATE_VP_LEAF         = 74,
+    TDH_EXPORT_UNBLOCKW_LEAF         = 75,
+    TDH_IMPORT_ABORT_LEAF            = 80,
+    TDH_IMPORT_END_LEAF              = 81,
+    TDH_IMPORT_COMMIT_LEAF           = 82,
+    TDH_IMPORT_MEM_LEAF              = 83,
+    TDH_IMPORT_TRACK_LEAF            = 84,
+    TDH_IMPORT_STATE_IMMUTABLE_LEAF  = 85,
+    TDH_IMPORT_STATE_TD_LEAF         = 86,
+    TDH_IMPORT_STATE_VP_LEAF         = 87,
+    TDH_MIG_STREAM_CREATE_LEAF       = 96
 
-struct vTD {
-    struct kvm *vm;
-    struct kvm_vcpu *vcpu;
-};
+} seamcall_leaf_opcode_t;
 
-static struct vTD* create_vTD(void);
-static void run_vm(void);
-static void destroy_vm(void);
+static long vtdcall(void);
 
 #endif /* __VTDX_H__ */

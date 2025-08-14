@@ -9,81 +9,231 @@
 
 #include "vtdx.h"
 
-static long vtd_ioctl(struct file *flip,
-        unsigned int ioctl, unsigned long arg) {
-    switch (ioctl) {
-        case VTDX_CREATE_TD: // Example command
-            create_vTD();
-            printk(KERN_INFO "Create TD.\n");
-            return 0;
-        case VTDX_DESTROY_TD:
-            destroy_vm();
-            printk(KERN_INFO "Destroy TD.\n");
-            return 0;
-        case VTDX_RUN_TD:
-            run_vm();
-            printk(KERN_INFO "Run TD.\n");
-            return 0;
-        default:
-            return -EINVAL; // Invalid argument
-    }
-}
-
-static struct file_operations vtd_chardev_ops = {
-    .owner = THIS_MODULE,
-    .unlocked_ioctl = vtd_ioctl
-};
-
-static struct miscdevice vtdx_dev = {
-    .minor = MISC_DYNAMIC_MINOR, // Dynamic minor number
-    .name = "vtdx", // Device name
-    .fops = &vtd_chardev_ops, // File operations
-    .mode = 0666, // Permissions
-};
-
 static int __init vtdx_init(void) {
     printk(KERN_INFO "VTDX Module Initialized.\n");
-    return misc_register(&vtdx_dev);
 }
 
 static void __exit vtdx_exit(void) {
     printk(KERN_INFO "VTDX Module Exit.\n");
-    misc_deregister(&vtdx_dev);
 }
 
-static struct vTD* create_vTD(void) {
-    struct vTD *vtd;
-    int ret;
-
-    vtd = kmalloc(sizeof(struct vTD), GFP_KERNEL);
-    if (!vtd) {
-        printk(KERN_ERR "Failed to allocate memory for vTD\n");
-        return -ENOMEM;
+static long vtdcall(int opcode) {
+    switch (opcode) {
+        case TDH_VP_ENTER_LEAF:
+            printk(KERN_INFO "Handling TDH_VP_ENTER_LEAF\n");
+            break;
+        case TDH_MNG_ADDCX_LEAF:
+            printk(KERN_INFO "Handling TDH_MNG_ADDCX_LEAF\n");
+            break;
+        case TDH_MEM_PAGE_ADD_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_PAGE_ADD_LEAF\n");
+            break;
+        case TDH_MEM_SEPT_ADD_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_SEPT_ADD_LEAF\n");
+            break;
+        case TDH_VP_ADDCX_LEAF:
+            printk(KERN_INFO "Handling TDH_VP_ADDCX_LEAF\n");
+            break;
+        case TDH_MEM_PAGE_RELOCATE:
+            printk(KERN_INFO "Handling TDH_MEM_PAGE_RELOCATE\n");
+            break;
+        case TDH_MEM_PAGE_AUG_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_PAGE_AUG_LEAF\n");
+            break;
+        case TDH_MEM_RANGE_BLOCK_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_RANGE_BLOCK_LEAF\n");
+            break;
+        case TDH_MNG_KEY_CONFIG_LEAF:
+            printk(KERN_INFO "Handling TDH_MNG_KEY_CONFIG_LEAF\n");
+            break;
+        case TDH_MNG_CREATE_LEAF:
+            printk(KERN_INFO "Handling TDH_MNG_CREATE_LEAF\n");
+            break;
+        case TDH_VP_CREATE_LEAF:
+            printk(KERN_INFO "Handling TDH_VP_CREATE_LEAF\n");
+            break;
+        case TDH_MNG_RD_LEAF:
+            printk(KERN_INFO "Handling TDH_MNG_RD_LEAF\n");
+            break;
+        case TDH_MEM_RD_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_RD_LEAF\n");
+            break;
+        case TDH_MNG_WR_LEAF:
+            printk(KERN_INFO "Handling TDH_MNG_WR_LEAF\n");
+            break;
+        case TDH_MEM_WR_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_WR_LEAF\n");
+            break;
+        case TDH_MEM_PAGE_DEMOTE_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_PAGE_DEMOTE_LEAF\n");
+            break;
+        case TDH_MR_EXTEND_LEAF:
+            printk(KERN_INFO "Handling TDH_MR_EXTEND_LEAF\n");
+            break;
+        case TDH_MR_FINALIZE_LEAF:
+            printk(KERN_INFO "Handling TDH_MR_FINALIZE_LEAF\n");
+            break;
+        case TDH_VP_FLUSH_LEAF:
+            printk(KERN_INFO "Handling TDH_VP_FLUSH_LEAF\n");
+            break;
+        case TDH_MNG_VPFLUSHDONE_LEAF:
+            printk(KERN_INFO "Handling TDH_MNG_VPFLUSHDONE_LEAF\n");
+            break;
+        case TDH_MNG_KEY_FREEID_LEAF:
+            printk(KERN_INFO "Handling TDH_MNG_KEY_FREEID_LEAF\n");
+            break;
+        case TDH_MNG_INIT_LEAF:
+            printk(KERN_INFO "Handling TDH_MNG_INIT_LEAF\n");
+            break;
+        case TDH_VP_INIT_LEAF:
+            printk(KERN_INFO "Handling TDH_VP_INIT_LEAF\n");
+            break;
+        case TDH_MEM_PAGE_PROMOTE_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_PAGE_PROMOTE_LEAF\n");
+            break;
+        case TDH_PHYMEM_PAGE_RDMD_LEAF:
+            printk(KERN_INFO "Handling TDH_PHYMEM_PAGE_RDMD_LEAF\n");
+            break;
+        case TDH_MEM_SEPT_RD_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_SEPT_RD_LEAF\n");
+            break;
+        case TDH_VP_RD_LEAF:
+            printk(KERN_INFO "Handling TDH_VP_RD_LEAF\n");
+            break;
+        case TDH_MNG_KEY_RECLAIMID_LEAF:
+            printk(KERN_INFO "Handling TDH_MNG_KEY_RECLAIMID_LEAF\n");
+            break;
+        case TDH_PHYMEM_PAGE_RECLAIM_LEAF:
+            printk(KERN_INFO "Handling TDH_PHYMEM_PAGE_RECLAIM_LEAF\n");
+            break;
+        case TDH_MEM_PAGE_REMOVE_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_PAGE_REMOVE_LEAF\n");
+            break;
+        case TDH_MEM_SEPT_REMOVE_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_SEPT_REMOVE_LEAF\n");
+            break;
+        case TDH_SYS_KEY_CONFIG_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_KEY_CONFIG_LEAF\n");
+            break;
+        case TDH_SYS_INFO_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_INFO_LEAF\n");
+            break;
+        case TDH_SYS_INIT_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_INIT_LEAF\n");
+            break;
+        case TDH_SYS_RD_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_RD_LEAF\n");
+            break;
+        case TDH_SYS_LP_INIT_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_LP_INIT_LEAF\n");
+            break;
+        case TDH_SYS_TDMR_INIT_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_TDMR_INIT_LEAF\n");
+            break;
+        case TDH_SYS_RDALL_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_RDALL_LEAF\n");
+            break;
+        case TDH_MEM_TRACK_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_TRACK_LEAF\n");
+            break;
+        case TDH_MEM_RANGE_UNBLOCK_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_RANGE_UNBLOCK_LEAF\n");
+            break;
+        case TDH_PHYMEM_CACHE_WB_LEAF:
+            printk(KERN_INFO "Handling TDH_PHYMEM_CACHE_WB_LEAF\n");
+            break;
+        case TDH_PHYMEM_PAGE_WBINVD_LEAF:
+            printk(KERN_INFO "Handling TDH_PHYMEM_PAGE_WBINVD_LEAF\n");
+            break;
+        case TDH_MEM_SEPT_WR_LEAF:
+            printk(KERN_INFO "Handling TDH_MEM_SEPT_WR_LEAF\n");
+            break;
+        case TDH_VP_WR_LEAF:
+            printk(KERN_INFO "Handling TDH_VP_WR_LEAF\n");
+            break;
+        case TDH_SYS_LP_SHUTDOWN_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_LP_SHUTDOWN_LEAF\n");
+            break;
+        case TDH_SYS_CONFIG_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_CONFIG_LEAF\n");
+            break;
+        case TDH_SERVTD_BIND_LEAF:
+            printk(KERN_INFO "Handling TDH_SERVTD_BIND_LEAF\n");
+            break;
+        case TDH_SERVTD_PREBIND_LEAF:
+            printk(KERN_INFO "Handling TDH_SERVTD_PREBIND_LEAF\n");
+            break;
+        case TDH_SYS_SHUTDOWN_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_SHUTDOWN_LEAF\n");
+            break;
+        case TDH_SYS_UPDATE_LEAF:
+            printk(KERN_INFO "Handling TDH_SYS_UPDATE_LEAF\n");
+            break;
+        case TDH_EXPORT_ABORT_LEAF:
+            printk(KERN_INFO "Handling TDH_EXPORT_ABORT_LEAF\n");
+            break;
+        case TDH_EXPORT_BLOCKW_LEAF:
+            printk(KERN_INFO "Handling TDH_EXPORT_BLOCKW_LEAF\n");
+            break;
+        case TDH_EXPORT_RESTORE_LEAF:
+            printk(KERN_INFO "Handling TDH_EXPORT_RESTORE_LEAF\n");
+            break;
+        case TDH_EXPORT_MEM_LEAF:
+            printk(KERN_INFO "Handling TDH_EXPORT_MEM_LEAF\n");
+            break;
+        case TDH_EXPORT_PAUSE_LEAF:
+            printk(KERN_INFO "Handling TDH_EXPORT_PAUSE_LEAF\n");
+            break;
+        case TDH_EXPORT_TRACK_LEAF:
+            printk(KERN_INFO "Handling TDH_EXPORT_TRACK_LEAF\n");
+            break;
+        case TDH_EXPORT_STATE_IMMUTABLE_LEAF:
+            printk(KERN_INFO "Handling TDH_EXPORT_STATE_IMMUTABLE_LEAF\n");
+            break;
+        case TDH_EXPORT_STATE_TD_LEAF:
+            printk(KERN_INFO "Handling TDH_EXPORT_STATE_TD_LEAF\n");
+            break;
+        case TDH_EXPORT_STATE_VP_LEAF:
+            printk(KERN_INFO "Handling TDH_EXPORT_STATE_VP_LEAF\n");
+            break;
+        case TDH_EXPORT_UNBLOCKW_LEAF:
+            printk(KERN_INFO "Handling TDH_EXPORT_UNBLOCKW_LEAF\n");
+            break;
+        case TDH_IMPORT_ABORT_LEAF:
+            printk(KERN_INFO "Handling TDH_IMPORT_ABORT_LEAF\n");
+            break;
+        case TDH_IMPORT_END_LEAF:
+            printk(KERN_INFO "Handling TDH_IMPORT_END_LEAF\n");
+            break;
+        case TDH_IMPORT_COMMIT_LEAF:
+            printk(KERN_INFO "Handling TDH_IMPORT_COMMIT_LEAF\n");
+            break;
+        case TDH_IMPORT_MEM_LEAF:
+            printk(KERN_INFO "Handling TDH_IMPORT_MEM_LEAF\n");
+            break;
+        case TDH_IMPORT_TRACK_LEAF:
+            printk(KERN_INFO "Handling TDH_IMPORT_TRACK_LEAF\n");
+            break;
+        case TDH_IMPORT_STATE_IMMUTABLE_LEAF:
+            printk(KERN_INFO "Handling TDH_IMPORT_STATE_IMMUTABLE_LEAF\n");
+            break;
+        case TDH_IMPORT_STATE_TD_LEAF:
+            printk(KERN_INFO "Handling TDH_IMPORT_STATE_TD_LEAF\n");
+            break;
+        case TDH_IMPORT_STATE_VP_LEAF:
+            printk(KERN_INFO "Handling TDH_IMPORT_STATE_VP_LEAF\n");
+            break;
+        case TDH_MIG_STREAM_CREATE_LEAF:
+            printk(KERN_INFO "Handling TDH_MIG_STREAM_CREATE_LEAF\n");
+            break;
+        case default:
+            printk(KERN_ERR "Unknown opcode: %d\n", opcode);
+            return -EINVAL;
     }
-    kvm_get_kvm(vtd->vm);
-    if (IS_ERR(vtd->vm)) {
-        printk(KERN_ERR "Failed to create VM\n");
-        kfree(vtd);
-        return PTR_ERR(vtd->vm);
-    }
-    kvm_get_vcpu(vtd->vm, 0);
-    if (IS_ERR(vtd->vcpu)) {
-        printk(KERN_ERR "Failed to create VCPU\n");
-        kvm_put_kvm(vtd->vm);
-        kfree(vtd);
-        return PTR_ERR(vtd->vcpu);
-    }
-    printk(KERN_INFO "Virtual TD created successfully.\n");
-    return vtd;
+    return 0;
 }
 
-static void run_vm(void) {
-    // Placeholder for VM running logic
-}
-
-static void destroy_vm(void) {
-    // Placeholder for VM destruction logic
-}
+EXTERN_SYMBOL(vtdcall);
 
 
 
